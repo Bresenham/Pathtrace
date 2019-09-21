@@ -13,10 +13,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="fill_horizontal|fill_vertical"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        ></android.app.gui.Screen>
+        tools:visibility="visible"></android.app.gui.Screen>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

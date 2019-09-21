@@ -7,11 +7,10 @@ import android.graphics.PixelFormat
 import android.util.AttributeSet
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-import java.util.*
 
 class Screen : SurfaceView, SurfaceHolder.Callback, Runnable {
 
-    private var stackWithChanges = Stack<RenderFragment>()
+    private lateinit var stackWithChanges : MutableList<RenderFragment>
     private lateinit var surfaceHolder : SurfaceHolder
 
     private val paint = Paint().apply{
@@ -22,17 +21,15 @@ class Screen : SurfaceView, SurfaceHolder.Callback, Runnable {
         holder.addCallback(this)
     }
 
-    fun pushChanges(data: Stack<RenderFragment>) {
+    fun pushChanges(data: MutableList<RenderFragment>) {
         stackWithChanges = data
         Thread(this).start()
     }
 
-
     override fun run() {
         val ctx = surfaceHolder.lockCanvas()
-        while(!stackWithChanges.empty()) {
-            val frag = stackWithChanges.pop()
 
+        stackWithChanges.forEach { frag ->
             for(x in frag.fromX until frag.fromX + frag.xLength) {
                 for(y in frag.fromY until frag.fromY + frag.yLength) {
                     val col = frag.pixelData[x - frag.fromX][y - frag.fromY]

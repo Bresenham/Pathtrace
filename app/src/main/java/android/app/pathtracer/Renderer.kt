@@ -54,7 +54,7 @@ class Renderer(private val s : Scene, private val width : Int, private val heigh
             for(y in frag.fromY until frag.fromY + frag.yLength) {
                 val r = pixelToWorldCoordinates(x, y)
                 val col = trace(r, 1)
-                frag.pixelData[x - frag.fromX][y - frag.fromY] = col
+                frag.pixelData[x - frag.fromX][y - frag.fromY] = frag.pixelData[x - frag.fromX][y - frag.fromY].add(col).div(2.0)
             }
         }
     }

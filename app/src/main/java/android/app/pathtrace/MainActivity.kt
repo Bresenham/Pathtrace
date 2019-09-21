@@ -1,5 +1,8 @@
 package android.app.pathtrace
 
+import android.app.rendering.AsyncTaskDoneListener
+import android.app.rendering.Col
+import android.app.rendering.RenderAsyncTask
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
@@ -8,8 +11,12 @@ import android.view.MenuItem
 import com.example.pathtrace.R
 
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
+import java.util.Stack
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
+
+    private var completeArray = Stack<Pair<Pair<Int, Int>, Array<Array<Col>>>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,6 +27,13 @@ class MainActivity : AppCompatActivity() {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
         }
+
+
+    }
+
+    override fun pushChanges(data: Pair<Pair<Int, Int>, Array<Array<Col>>>) {
+        completeArray.push(data)
+        renderScreen.pushChanges(completeArray)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -35,6 +49,14 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+
+        renderScreen.viewTreeObserver.addOnGlobalLayoutListener {
+            RenderAsyncTask(this).execute(0, renderScreen.width, 0, renderScreen.height)
         }
     }
 }

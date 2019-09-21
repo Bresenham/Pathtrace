@@ -1,6 +1,6 @@
 package android.app.gui
 
-import android.app.pathtracer.Col
+import android.app.pathtracer.RenderFragment
 import android.content.Context
 import android.graphics.Paint
 import android.graphics.PixelFormat
@@ -11,7 +11,7 @@ import java.util.*
 
 class Screen : SurfaceView, SurfaceHolder.Callback, Runnable {
 
-    private var stackWithChanges = Stack<Pair<Pair<Int, Int>, Array<Array<Col>>>>()
+    private var stackWithChanges = Stack<RenderFragment>()
     private lateinit var surfaceHolder : SurfaceHolder
 
     private val paint = Paint().apply{
@@ -22,7 +22,7 @@ class Screen : SurfaceView, SurfaceHolder.Callback, Runnable {
         holder.addCallback(this)
     }
 
-    fun pushChanges(data: Stack<Pair<Pair<Int, Int>, Array<Array<Col>>>>) {
+    fun pushChanges(data: Stack<RenderFragment>) {
         stackWithChanges = data
         Thread(this).start()
     }
@@ -31,16 +31,11 @@ class Screen : SurfaceView, SurfaceHolder.Callback, Runnable {
     override fun run() {
         val ctx = surfaceHolder.lockCanvas()
         while(!stackWithChanges.empty()) {
-            val data = stackWithChanges.pop()
+            val frag = stackWithChanges.pop()
 
-            val startX = data.first.first
-            val startY = data.first.second
-            val xLength = data.second.size
-            val yLength = data.second[0].size
-
-            for(x in startX until startX + xLength) {
-                for(y in startY until startY + yLength) {
-                    val col = data.second[x - startX][y - startY]
+            for(x in frag.fromX until frag.fromX + frag.xLength) {
+                for(y in frag.fromY until frag.fromY + frag.yLength) {
+                    val col = frag.pixelData[x - frag.fromX][y - frag.fromY]
                     ctx.drawPoint(x.toFloat(), y.toFloat(), paint.apply { setARGB(255, col.r, col.g, col.b) })
                 }
             }

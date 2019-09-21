@@ -4,7 +4,6 @@ import kotlin.math.tan
 
 class Renderer(private val s : Scene, private val width : Int, private val height : Int, private val traceDepth : Int) {
 
-
     private fun pixelToWorldCoordinates(x : Int, y : Int) : Ray {
         val fov = 160.0 * Math.PI / 180.0
         val zDir = 1.0 / tan(fov)
@@ -50,12 +49,12 @@ class Renderer(private val s : Scene, private val width : Int, private val heigh
         }
     }
 
-    fun renderOneStep(startX : Int, xLength : Int, startY : Int, yLength : Int, fillColorArray : Array<Array<Col>>) {
-        for(x in startX until startX + xLength) {
-            for(y in startY until startY + yLength) {
+    fun renderOneStep(frag : RenderFragment) {
+        for(x in frag.fromX until frag.fromX + frag.xLength) {
+            for(y in frag.fromY until frag.fromY + frag.yLength) {
                 val r = pixelToWorldCoordinates(x, y)
                 val col = trace(r, 1)
-                fillColorArray[x - startX][y - startY] = col
+                frag.pixelData[x - frag.fromX][y - frag.fromY] = col
             }
         }
     }

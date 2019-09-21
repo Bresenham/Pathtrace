@@ -16,7 +16,7 @@ import java.util.Stack
 
 class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
 
-    private var completeArray = Stack<Pair<Pair<Int, Int>, Array<Array<Col>>>>()
+    private var completeArray = Stack<RenderFragment>()
     private val threads = 8
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
         }
     }
 
-    override fun pushChanges(data: Pair<Pair<Int, Int>, Array<Array<Col>>>) {
+    override fun pushChanges(data: RenderFragment) {
         completeArray.push(data)
         if(completeArray.size == threads) {
             renderScreen.pushChanges(completeArray)
@@ -58,35 +58,37 @@ class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
 
         renderScreen.viewTreeObserver.addOnGlobalLayoutListener {
             val heightSize = renderScreen.height / threads
+
+            val renderer = Renderer(
+                Scene(
+                    Sphere(
+                        Point3D(-9.0, 1.0, 1.0),
+                        3.0,
+                        Col(255,0,0),
+                        false
+                    ),
+                    Sphere(
+                        Point3D(3.0, 1.0, 1.0),
+                        3.0,
+                        Col(0,0,255),
+                        false
+                    ),
+                    Triangle(
+                        Point3D(-2.0, 7.0, 0.0),
+                        Point3D(3.0, 5.0, 1.0),
+                        Point3D(0.0, 3.0, -1.0),
+                        Col(0, 255, 0),
+                        false
+                    ),
+                    Sphere(
+                        Point3D(-3.0, 1.0, 1.0),
+                        3.0,
+                        Col(255,255,255),
+                        true
+                    )
+                ), renderScreen.measuredWidth, renderScreen.height, 4)
+
             for(i in 0 until threads) {
-                val renderer = Renderer(
-                    Scene(
-                        Sphere(
-                            Point3D(-9.0, 1.0, 1.0),
-                            3.0,
-                            Col(255,0,0),
-                            false
-                        ),
-                        Sphere(
-                            Point3D(3.0, 1.0, 1.0),
-                            3.0,
-                            Col(0,0,255),
-                            false
-                        ),
-                        Triangle(
-                            Point3D(-2.0, 7.0, 0.0),
-                            Point3D(3.0, 5.0, 1.0),
-                            Point3D(0.0, 3.0, -1.0),
-                            Col(0, 255, 0),
-                            false
-                        ),
-                        Sphere(
-                            Point3D(-3.0, 1.0, 1.0),
-                            3.0,
-                            Col(255,255,255),
-                            true
-                        )
-                    ), renderScreen.measuredWidth, renderScreen.height, 4)
                 RenderAsyncTask(this, renderer).execute(0, renderScreen.width, heightSize * i, heightSize)
             }
         }

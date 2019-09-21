@@ -1,7 +1,7 @@
 package android.app.rendering
 
-import android.app.pathtracer.Col
+import android.app.pathtracer.RenderFragment
 
 interface AsyncTaskDoneListener {
-    fun pushChanges(data : Pair<Pair<Int, Int>, Array<Array<Col>>>)
+    fun pushChanges(data : RenderFragment)
 }

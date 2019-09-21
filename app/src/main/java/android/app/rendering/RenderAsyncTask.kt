@@ -1,11 +1,12 @@
 package android.app.rendering
 
 import android.app.pathtracer.Col
+import android.app.pathtracer.RenderFragment
 import android.app.pathtracer.Renderer
 import android.os.AsyncTask
 
 
-class RenderAsyncTask(private val listener : AsyncTaskDoneListener,  private val renderer : Renderer) : AsyncTask<Int, Void, Pair<Pair<Int, Int>, Array<Array<Col>>>>() {
+class RenderAsyncTask(private val listener : AsyncTaskDoneListener,  private val renderer : Renderer) : AsyncTask<Int, Void, RenderFragment>() {
 
     var fromX : Int = 0
     var xLength: Int = 0
@@ -13,14 +14,14 @@ class RenderAsyncTask(private val listener : AsyncTaskDoneListener,  private val
     var fromY: Int = 0
     var yLength: Int = 0
 
-    override fun doInBackground(vararg p0: Int?): Pair<Pair<Int, Int>, Array<Array<Col>>> {
+    override fun doInBackground(vararg p0: Int?): RenderFragment {
         fromX = p0[0]!!
         xLength = p0[1]!!
 
         fromY = p0[2]!!
         yLength = p0[3]!!
 
-        val returnArray = Pair(Pair(fromX, fromY), Array(xLength) {Array(yLength) {
+        val fragment = RenderFragment(fromX, xLength, fromY, yLength, Array(xLength) {Array(yLength) {
             Col(
                 0,
                 0,
@@ -28,12 +29,12 @@ class RenderAsyncTask(private val listener : AsyncTaskDoneListener,  private val
             )
         } })
 
-        renderer.renderOneStep(fromX, xLength, fromY, yLength, returnArray.second)
+        renderer.renderOneStep(fragment)
 
-        return returnArray
+        return fragment
     }
 
-    override fun onPostExecute(result: Pair<Pair<Int, Int>, Array<Array<Col>>>) {
+    override fun onPostExecute(result: RenderFragment) {
         listener.pushChanges(result)
     }
 }

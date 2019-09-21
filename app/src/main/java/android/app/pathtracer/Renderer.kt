@@ -16,7 +16,7 @@ class Renderer(private val s : Scene, private val width : Int, private val heigh
         val yDir = ((yH / height.toDouble()) * 2.0 - 1.0) * aspect
 
 
-        return Ray(Point3D(0.0, 0.25, 50.25), Point3D(xDir, yDir, zDir))
+        return Ray(Point3D(1.0, 0.25, 25.25), Point3D(xDir, yDir, zDir))
     }
 
     private fun trace(r : Ray, currentTraceDepth : Int) : Col {
@@ -54,7 +54,7 @@ class Renderer(private val s : Scene, private val width : Int, private val heigh
             for(y in frag.fromY until frag.fromY + frag.yLength) {
                 val r = pixelToWorldCoordinates(x, y)
                 val col = trace(r, 1)
-                frag.pixelData[x - frag.fromX][y - frag.fromY] = frag.pixelData[x - frag.fromX][y - frag.fromY].add(col).div(2.0)
+                frag.pixelData[x - frag.fromX][y - frag.fromY] = frag.pixelData[x - frag.fromX][y - frag.fromY].add(col)
             }
         }
     }

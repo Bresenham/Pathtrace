@@ -17,6 +17,7 @@ import java.util.Stack
 class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
 
     private var completeArray = Stack<Pair<Pair<Int, Int>, Array<Array<Col>>>>()
+    private val threads = 8
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,13 +28,13 @@ class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
         }
-
-
     }
 
     override fun pushChanges(data: Pair<Pair<Int, Int>, Array<Array<Col>>>) {
         completeArray.push(data)
-        renderScreen.pushChanges(completeArray)
+        if(completeArray.size == threads) {
+            renderScreen.pushChanges(completeArray)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -56,7 +57,10 @@ class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
         super.onWindowFocusChanged(hasFocus)
 
         renderScreen.viewTreeObserver.addOnGlobalLayoutListener {
-            RenderAsyncTask(this).execute(0, renderScreen.width, 0, renderScreen.height)
+            val heightSize = renderScreen.height / threads
+            for(i in 0 until threads) {
+                RenderAsyncTask(this).execute(0, renderScreen.width, heightSize * i, heightSize)
+            }
         }
     }
 }

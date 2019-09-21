@@ -14,7 +14,7 @@ class Screen : SurfaceView, SurfaceHolder.Callback, Runnable {
     private var stackWithChanges = Stack<Pair<Pair<Int, Int>, Array<Array<Col>>>>()
     private lateinit var surfaceHolder : SurfaceHolder
 
-    private val paint : Paint = Paint().apply{
+    private val paint = Paint().apply{
         setARGB(255, 255, 0, 0)
     }
 
@@ -49,14 +49,6 @@ class Screen : SurfaceView, SurfaceHolder.Callback, Runnable {
         surfaceHolder.unlockCanvasAndPost(ctx)
     }
 
-    override fun surfaceChanged(p0: SurfaceHolder?, p1: Int, p2: Int, p3: Int) {
-
-    }
-
-    override fun surfaceDestroyed(p0: SurfaceHolder?) {
-
-    }
-
     override fun surfaceCreated(p0: SurfaceHolder?) {
         if(!::surfaceHolder.isInitialized) {
             surfaceHolder = p0!!
@@ -64,5 +56,13 @@ class Screen : SurfaceView, SurfaceHolder.Callback, Runnable {
             surfaceHolder.addCallback(this)
             surfaceHolder.setFormat(PixelFormat.TRANSLUCENT)
         }
+    }
+
+    override fun surfaceChanged(p0: SurfaceHolder?, p1: Int, p2: Int, p3: Int) {
+
+    }
+
+    override fun surfaceDestroyed(p0: SurfaceHolder?) {
+
     }
 }

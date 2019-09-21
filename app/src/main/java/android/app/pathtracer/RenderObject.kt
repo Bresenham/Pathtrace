@@ -5,5 +5,5 @@ abstract class RenderObject(val col : Col, val isLight : Boolean) {
         const val EPSILON = 10e-6
     }
 
-    abstract fun intersect(r : Ray) : Point3D
+    abstract fun intersect(r : Ray) : Double
 }

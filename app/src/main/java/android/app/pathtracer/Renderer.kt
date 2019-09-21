@@ -8,7 +8,7 @@ class Renderer(private val s : Scene, private val width : Int, private val heigh
     private fun pixelToWorldCoordinates(x : Int, y : Int) : Ray {
         val fov = 160.0 * Math.PI / 180.0
         val zDir = 1.0 / tan(fov)
-        val aspect = width.toDouble() / height.toDouble()
+        val aspect = height.toDouble() / width.toDouble()
 
         val xH = x + 0.5
         val yH = y + 0.5
@@ -27,18 +27,14 @@ class Renderer(private val s : Scene, private val width : Int, private val heigh
 
         var hitDistance = 1e20
         var hitObject : RenderObject? = null
+
         s.objects.forEach { obj ->
 
-            val localIntersectionPoint = obj.intersect(r)
-
-            if(!localIntersectionPoint.isEqualTo(Point3D(-1.0, -1.0, -1.0))) {
-                val distance = localIntersectionPoint.distanceTo(r.o)
-                if(distance < hitDistance) {
-                    hitDistance = distance
-                    hitObject = obj
-                }
+            val distance = obj.intersect(r)
+            if(distance != -1.0 && distance < hitDistance) {
+                hitDistance = distance
+                hitObject = obj
             }
-
         }
 
         return when(hitObject != null) {

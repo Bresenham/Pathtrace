@@ -1,5 +1,8 @@
 package android.app.pathtracer
 
+import kotlin.math.cos
+import kotlin.math.max
+import kotlin.math.sin
 import kotlin.math.sqrt
 
 class Point3D(private val x : Double, private val y : Double, private val z : Double) {
@@ -32,18 +35,28 @@ class Point3D(private val x : Double, private val y : Double, private val z : Do
 
     companion object {
         fun randomHemisphereDirection() : Point3D {
-            var x : Double
-            var y : Double
-            var z : Double
-            var d : Double
-            do {
-                x = -1.0 + Math.random()
-                y = (-1.0 + Math.random())
-                z = -1.0 + Math.random()
-                d = sqrt(x * x + y * y + z * z)
-            }  while(d > 1)
 
-            return Point3D(x / d, y/ d, z / d).normalize()
+            /*
+
+                float u1 = (float)rand() / (float)RAND_MAX;
+                float u2 = (float)rand() / (float)RAND_MAX;
+                float z = 1.0f - 2.0f * u1;
+                float r = sqrtf(fmaxf(0.0, 1.0f - z * z));
+                float phi = 2.0f * (float)M_PI * u2;
+                float x = r * cosf(phi);
+                float y = r * sinf(phi);
+                return norm((struct Point) {.x = x, .y = y, .z = z});
+
+             */
+
+            val u1 = Math.random()
+            val u2 = Math.random()
+            val z = 1.0 - 2.0 * u1
+            val r = sqrt(max(0.0, 1.0 - z * z))
+            val phi = 2.0 * Math.PI * u2
+            val x = r * cos(phi)
+            val y = r * sin(phi)
+            return Point3D(x, y, z).normalize()
         }
     }
 

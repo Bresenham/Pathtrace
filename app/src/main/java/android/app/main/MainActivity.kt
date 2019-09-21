@@ -61,13 +61,31 @@ class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
             for(i in 0 until threads) {
                 val renderer = Renderer(
                     Scene(
+                        Sphere(
+                            Point3D(-9.0, 1.0, 1.0),
+                            3.0,
+                            Col(255,0,0),
+                            false
+                        ),
+                        Sphere(
+                            Point3D(3.0, 1.0, 1.0),
+                            3.0,
+                            Col(0,0,255),
+                            false
+                        ),
                         Triangle(
-                            Point3D(1.0, 1.0, 1.0),
-                            Point3D(3.0, 2.0, 1.0),
-                            Point3D(5.0, 2.0, -1.5),
-                            Col(255, 0, 0),
+                            Point3D(-2.0, 7.0, 0.0),
+                            Point3D(3.0, 5.0, 1.0),
+                            Point3D(0.0, 3.0, -1.0),
+                            Col(0, 255, 0),
+                            false
+                        ),
+                        Sphere(
+                            Point3D(-3.0, 1.0, 1.0),
+                            3.0,
+                            Col(255,255,255),
                             true
-                            )
+                        )
                     ), renderScreen.measuredWidth, renderScreen.height, 4)
                 RenderAsyncTask(this, renderer).execute(0, renderScreen.width, heightSize * i, heightSize)
             }

@@ -1,9 +1,9 @@
 package android.app.pathtracer
 
-interface RenderObject {
+abstract class RenderObject(val col : Col, val isLight : Boolean) {
     companion object {
         const val EPSILON = 10e-6
     }
 
-    fun intersect(r : Ray) : Point3D
+    abstract fun intersect(r : Ray) : Point3D
 }

@@ -1,8 +1,6 @@
 package android.app.pathtracer
 
-import android.app.pathtracer.RenderObject.Companion.EPSILON
-
-class Triangle(private val v0 : Point3D, private val v1 : Point3D, private val v2 : Point3D, val color : Col, val isLight : Boolean) : RenderObject {
+class Triangle(private val v0 : Point3D, private val v1 : Point3D, private val v2 : Point3D, col : Col, isLight : Boolean) : RenderObject(col, isLight) {
 
     override fun intersect(r: Ray): Point3D {
         val edge1 = v1.sub(v0)

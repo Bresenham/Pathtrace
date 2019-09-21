@@ -1,5 +1,12 @@
 package android.app.pathtracer
 
-open class Col(val r: Int, val g: Int, val b: Int) {
+class Col(val r : Int, val g : Int, val b : Int) {
 
+    fun mult(c2 : Col) : Col {
+        return Col(r * c2.r, g * c2.g, b * c2.b)
+    }
+
+    fun div(f : Double) : Col {
+        return Col((r / f).toInt(), (g / f).toInt(), (b / f).toInt())
+    }
 }

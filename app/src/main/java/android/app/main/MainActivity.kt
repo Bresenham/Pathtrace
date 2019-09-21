@@ -1,7 +1,7 @@
-package android.app.pathtrace
+package android.app.main
 
+import android.app.pathtracer.*
 import android.app.rendering.AsyncTaskDoneListener
-import android.app.rendering.Col
 import android.app.rendering.RenderAsyncTask
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
@@ -59,7 +59,17 @@ class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
         renderScreen.viewTreeObserver.addOnGlobalLayoutListener {
             val heightSize = renderScreen.height / threads
             for(i in 0 until threads) {
-                RenderAsyncTask(this).execute(0, renderScreen.width, heightSize * i, heightSize)
+                val renderer = Renderer(
+                    Scene(
+                        Triangle(
+                            Point3D(1.0, 1.0, 1.0),
+                            Point3D(3.0, 2.0, 1.0),
+                            Point3D(5.0, 2.0, -1.5),
+                            Col(255, 0, 0),
+                            true
+                            )
+                    ), renderScreen.measuredWidth, renderScreen.height, 4)
+                RenderAsyncTask(this, renderer).execute(0, renderScreen.width, heightSize * i, heightSize)
             }
         }
     }

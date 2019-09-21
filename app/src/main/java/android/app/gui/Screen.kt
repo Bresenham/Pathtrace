@@ -1,6 +1,6 @@
 package android.app.gui
 
-import android.app.rendering.Col
+import android.app.pathtracer.Col
 import android.content.Context
 import android.graphics.Paint
 import android.graphics.PixelFormat

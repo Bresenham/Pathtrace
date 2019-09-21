@@ -1,9 +1,11 @@
 package android.app.rendering
 
+import android.app.pathtracer.Col
+import android.app.pathtracer.Renderer
 import android.os.AsyncTask
 
 
-class RenderAsyncTask(private val listener : AsyncTaskDoneListener) : AsyncTask<Int, Void, Pair<Pair<Int, Int>, Array<Array<Col>>>>() {
+class RenderAsyncTask(private val listener : AsyncTaskDoneListener,  private val renderer : Renderer) : AsyncTask<Int, Void, Pair<Pair<Int, Int>, Array<Array<Col>>>>() {
 
     var fromX : Int = 0
     var xLength: Int = 0
@@ -18,13 +20,15 @@ class RenderAsyncTask(private val listener : AsyncTaskDoneListener) : AsyncTask<
         fromY = p0[2]!!
         yLength = p0[3]!!
 
-        val returnArray = Pair(Pair(fromX, fromY), Array(xLength) {Array(yLength) {Col(0, 0, 0)} })
+        val returnArray = Pair(Pair(fromX, fromY), Array(xLength) {Array(yLength) {
+            Col(
+                0,
+                0,
+                0
+            )
+        } })
 
-        for(x in fromX until fromX + xLength) {
-            for(y in fromY until fromY + yLength) {
-                returnArray.second[x - fromX][y - fromY] = Col(0, 255, 0)
-            }
-        }
+        renderer.renderOneStep(fromX, xLength, fromY, yLength, returnArray.second)
 
         return returnArray
     }

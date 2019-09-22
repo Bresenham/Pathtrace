@@ -1,6 +1,6 @@
 package android.app.pathtracer
 
-abstract class RenderObject(val col : Col, val isLight : Boolean) {
+abstract class RenderObject(val col : Col, public var isLight : Boolean) {
 
     private lateinit var normal : Point3D
 

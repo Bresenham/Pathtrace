@@ -15,8 +15,7 @@ class Renderer(private val s : Scene, private val width : Int, private val heigh
         val xDir = (xH / width.toDouble()) * 2.0 - 1.0
         val yDir = ((yH / height.toDouble()) * 2.0 - 1.0) * aspect
 
-
-        return Ray(Point3D(1.0, 0.25, 15.25), Point3D(xDir, yDir, zDir))
+        return Ray(Point3D(10.0, 0.25, 15.25), Point3D(xDir, yDir, zDir))
     }
 
     private fun trace(r : Ray, currentTraceDepth : Int) : Col {
@@ -27,12 +26,13 @@ class Renderer(private val s : Scene, private val width : Int, private val heigh
         var hitDistance = 1e20
         var hitObject : RenderObject? = null
 
-        s.objects.forEach { obj ->
-
-            val distance = obj.intersect(r)
-            if(distance != -1.0 && distance < hitDistance) {
-                hitDistance = distance
-                hitObject = obj
+        s.objects.forEach { mesh ->
+            mesh.renderObjs.forEach { obj ->
+                val distance = obj.intersect(r)
+                if (distance != -1.0 && distance < hitDistance) {
+                    hitDistance = distance
+                    hitObject = obj
+                }
             }
         }
 
@@ -43,7 +43,7 @@ class Renderer(private val s : Scene, private val width : Int, private val heigh
                     val hitPoint = r.o.add(r.d.times(hitDistance))
                     val rndPoint = Point3D.randomHemisphereDirection()
                     val target = hitPoint.add(hitObject!!.getNormal()).add(rndPoint)
-                    val returnColor = trace(Ray(hitPoint, target.sub(hitPoint)), currentTraceDepth + 1).div(2.0)
+                    val returnColor = trace(Ray(hitPoint, target.sub(hitPoint).normalize()), currentTraceDepth + 1).div(2.0)
                     hitObject!!.col.mult(returnColor).div(255.0)
                 }
             }

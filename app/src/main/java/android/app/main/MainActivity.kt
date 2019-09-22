@@ -26,37 +26,38 @@ class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
     private var finishedThreadsCounter = 0
     private val threads = 8
     private val completeArray = mutableListOf<RenderFragment>()
-    private lateinit var triangles : Array<RenderObject>
-    private val objTest = "v 0.745072 1.349045 -0.790534\n" +
-            "v 0.373371 -0.424354 -1.637229\n" +
-            "v 1.457932 0.424354 0.833282\n" +
-            "v 1.086231 -1.349045 -0.013413\n" +
-            "v -1.086231 1.349045 0.013413\n" +
-            "v -1.457932 -0.424354 -0.833282\n" +
-            "v -0.373371 0.424354 1.637229\n" +
-            "v -0.745072 -1.349045 0.790534\n" +
-            "v 1.913353 0.795666 -1.113307\n" +
-            "v 1.694124 -0.250284 -1.612687\n" +
-            "v 2.333797 0.250284 -0.155582\n" +
-            "v 2.114568 -0.795666 -0.654962\n" +
-            "v -1.913796 0.918612 0.524586\n" +
-            "v -2.166901 -0.288958 -0.051958\n" +
-            "v -1.428385 0.288958 1.630299\n" +
-            "v -1.681490 -0.918612 1.053755\n" +
-            "v -0.542280 -0.424354 -1.235255\n" +
-            "v 0.709595 1.222619 1.616380\n" +
-            "v 0.170579 -1.349045 0.388561\n" +
-            "v -0.003264 2.147310 -0.007436\n" +
-            "v 0.466262 0.582928 -1.425632\n" +
-            "v -0.466262 -0.582928 1.425632\n" +
-            "v 1.365040 -0.582928 0.621685\n" +
-            "v -1.365040 0.582928 -0.621685\n" +
-            "v 1.748912 0.343810 -1.487887\n" +
-            "v 2.279010 -0.343810 -0.280382\n" +
-            "v -1.491638 -0.396936 1.486215\n" +
-            "v -2.103648 0.396936 0.092125\n" +
-            "v -0.365732 0.982061 -0.833096\n" +
-            "v 0.533046 -0.183796 1.214221\n" +
+    private lateinit var meshes : Array<Mesh>
+    private val objTest = "o Cube\n" +
+            "v 9.609877 0.953419 -0.790534\n" +
+            "v 9.238175 -0.819981 -1.637229\n" +
+            "v 10.322736 0.028728 0.833282\n" +
+            "v 9.951035 -1.744672 -0.013413\n" +
+            "v 7.778574 0.953419 0.013413\n" +
+            "v 7.406873 -0.819981 -0.833282\n" +
+            "v 8.491433 0.028728 1.637229\n" +
+            "v 8.119732 -1.744672 0.790534\n" +
+            "v 10.778158 0.400039 -1.113307\n" +
+            "v 10.558928 -0.645910 -1.612687\n" +
+            "v 11.198602 -0.145343 -0.155582\n" +
+            "v 10.979372 -1.191292 -0.654962\n" +
+            "v 6.951008 0.522986 0.524586\n" +
+            "v 6.697904 -0.684584 -0.051958\n" +
+            "v 7.436419 -0.106669 1.630299\n" +
+            "v 7.183315 -1.314239 1.053755\n" +
+            "v 8.322524 -0.819981 -1.235255\n" +
+            "v 9.574400 0.826993 1.616380\n" +
+            "v 9.035383 -1.744672 0.388561\n" +
+            "v 8.861540 1.751684 -0.007436\n" +
+            "v 9.331067 0.187302 -1.425632\n" +
+            "v 8.398541 -0.978554 1.425632\n" +
+            "v 10.229845 -0.978554 0.621685\n" +
+            "v 7.499764 0.187302 -0.621685\n" +
+            "v 10.613716 -0.051816 -1.487887\n" +
+            "v 11.143814 -0.739437 -0.280382\n" +
+            "v 7.373166 -0.792563 1.486215\n" +
+            "v 6.761157 0.001310 0.092125\n" +
+            "v 8.499073 0.586434 -0.833096\n" +
+            "v 9.397851 -0.579422 1.214221\n" +
             "vn -0.4745 0.6590 0.5836\n" +
             "vn 0.2859 -0.2222 0.9321\n" +
             "vn -0.4643 -0.8417 -0.2755\n" +
@@ -67,7 +68,7 @@ class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
             "vn 0.0776 0.6194 -0.7812\n" +
             "vn 0.1204 -0.8390 -0.5306\n" +
             "vn 0.4721 0.8390 0.2705\n" +
-            "vn -0.9157 0.0000 0.4020\n" +
+            "vn -0.9157 -0.0000 0.4020\n" +
             "vn -0.1115 0.8417 0.5283\n" +
             "vn -0.7063 0.2073 -0.6768\n" +
             "vn 0.0202 -0.2073 0.9781\n" +
@@ -155,7 +156,7 @@ class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
                     .setAction("Action", null).show()
         }
 
-        triangles = ObjReader.parseObj(objTest)
+        meshes = ObjReader.parseObj(objTest)
     }
 
     override fun notifyFinish() {
@@ -206,8 +207,8 @@ class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
             } else {
                 frag = completeArray[i]
             }
-
-            val renderer = Renderer(Scene(*triangles, Sphere(Point3D(6.0, 1.0, 1.0), 3.0, Col(255,255,255), true)), renderScreen.measuredWidth, renderScreen.height, 4)
+            meshes.filter { m -> m.name.equals("Cube") }.forEach { m -> m.setAsLight() }
+            val renderer = Renderer(Scene(*meshes), renderScreen.measuredWidth, renderScreen.height, 4)
             val task = RenderAsyncTask(this, renderer)
             task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, frag)
             Log.d("Task", "Started thread $i")

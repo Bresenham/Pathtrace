@@ -1,18 +1,17 @@
 package android.app.obj
 
-import android.app.pathtracer.Col
-import android.app.pathtracer.Point3D
-import android.app.pathtracer.RenderObject
-import android.app.pathtracer.Triangle
+import android.app.pathtracer.*
 
 class ObjReader {
 
     companion object {
-        fun parseObj(s : String) : Array<RenderObject> {
+        fun parseObj(s : String) : Array<Mesh> {
 
+            val meshes = ArrayList<Mesh>()
             val triangles = ArrayList<RenderObject>()
             val normals = ArrayList<Point3D>()
             val vertices = ArrayList<Point3D>()
+            var currentObjName = ""
 
             s.split("\n").forEach {line ->
                 /* Vertex Definition */
@@ -35,10 +34,19 @@ class ObjReader {
                     val y = points[2].toDouble()
                     val z = points[3].toDouble()
                     normals.add(Point3D(x, y, z))
+                } else if(line[0] == 'o') { /* Object Definition */
+                    if(triangles.isNotEmpty()) {
+                        meshes.add(Mesh(currentObjName, *triangles.toTypedArray()))
+
+                        triangles.clear()
+                    }
+                    currentObjName = line.split(line[1])[1]
                 }
             }
 
-            return triangles.toTypedArray()
+            meshes.add(Mesh(currentObjName, *triangles.toTypedArray()))
+
+            return meshes.toTypedArray()
         }
     }
 }

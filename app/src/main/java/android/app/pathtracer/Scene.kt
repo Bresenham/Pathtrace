@@ -1,4 +1,3 @@
 package android.app.pathtracer
 
-class Scene(vararg val objects : RenderObject) {
-}
+class Scene(vararg val objects : Mesh)

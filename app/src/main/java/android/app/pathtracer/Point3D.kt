@@ -19,22 +19,22 @@ class Point3D(private val x : Double, private val y : Double, private val z : Do
         return Point3D(x * t, y * t, z * t)
     }
 
+    fun times(p2 : Point3D) : Point3D {
+        return Point3D(x * p2.x , y * p2.y, z * p2.z)
+    }
+
     fun normalize() : Point3D {
-        val length = sqrt(x * x + y * y + z * z)
+        val length = this.length()
         return Point3D(x / length, y / length, z / length)
     }
 
-    fun isEqualTo(p2 : Point3D) : Boolean {
-        return x == p2.x && y == p2.y && z == p2.z
-    }
-
-    fun distanceTo(p2 : Point3D) : Double {
-        val nP = this.sub(p2)
-        return sqrt(nP.x * nP.x + nP.y * nP.y + nP.z * nP.z)
+    fun length() : Double {
+        return sqrt(x * x + y * y + z * z)
     }
 
     companion object {
         fun randomHemisphereDirection() : Point3D {
+            /*
             val u1 = Math.random()
             val u2 = Math.random()
             val z = 1.0 - 2.0 * u1
@@ -43,6 +43,15 @@ class Point3D(private val x : Double, private val y : Double, private val z : Do
             val x = r * cos(phi)
             val y = r * sin(phi)
             return Point3D(x, y, z).normalize()
+            */
+
+            lateinit var p : Point3D
+
+            do{
+                p = Point3D(Math.random(), Math.random(), Math.random()).sub(Point3D(1.0, 1.0, 1.0)).times(2.0)
+            } while (p.length() >= 1.0);
+
+            return p
         }
     }
 

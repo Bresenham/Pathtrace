@@ -1,20 +1,9 @@
 package android.app.pathtracer
 
-class Triangle : RenderObject {
+class Triangle(private val v0 : Point3D, private val v1 : Point3D, private val v2 : Point3D, col : Col, isLight : Boolean) : RenderObject(col, isLight) {
 
-    private var v0 : Point3D
-    private var v1 : Point3D
-    private var v2 : Point3D
-
-    constructor(v0 : Point3D, v1 : Point3D, v2 : Point3D, col : Col, isLight : Boolean) : super(col, isLight) {
-        this.v0 = v0
-        this.v1 = v1
-        this.v2 = v2
-
-        val u = v1.sub(v0)
-        val v = v2.sub(v0)
-
-        super.setNormal(u.cross(v))
+    constructor(v0 : Point3D, v1 : Point3D, v2 : Point3D, col : Col, isLight : Boolean, normal : Point3D) : this(v0, v1, v2, col, isLight) {
+        super.setNormal(normal)
     }
 
     override fun intersect(r: Ray): Double {

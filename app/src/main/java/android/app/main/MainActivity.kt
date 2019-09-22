@@ -22,10 +22,10 @@ import java.util.concurrent.ThreadPoolExecutor
 
 class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
 
-    private var passes = 1
-    private var finishedThreadsCounter = 0
-    private val threads = 16
+    private var activeThreads = 0
+    private val threads = 8
     private val completeArray = mutableListOf<RenderFragment>()
+    private var currentIdx = 0
     private lateinit var meshes : Array<Mesh>
     private val objTest = "# Blender v2.80 (sub 75) OBJ File: 'scene.blend'\n" +
             "# www.blender.org\n" +
@@ -448,19 +448,17 @@ class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
         }
 
         meshes = ObjReader.parseObj(objTest)
+        meshes.forEach { m -> m.setColor(Col(255, 255, 255)) }
+        meshes.first { m -> m.name == "Light" }.setAsLight()
     }
 
-    override fun notifyFinish() {
+    override fun notifyFinish(tileID : Int) {
         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
         val currentDate = sdf.format(Date())
-        Log.d("Task", "Task finished @ $currentDate")
-        finishedThreadsCounter += 1
-        if(finishedThreadsCounter == threads) {
-            finishedThreadsCounter = 0
-            renderScreen.pushChanges(completeArray)
-            passes += 1
-            render()
-        }
+        Log.d("Task", "Task $tileID finished @ $currentDate")
+        renderScreen.pushChanges(completeArray[tileID])
+        activeThreads -= 1
+        render()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -483,27 +481,38 @@ class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
         super.onWindowFocusChanged(hasFocus)
 
         renderScreen.viewTreeObserver.addOnGlobalLayoutListener {
+            initTiles()
             render()
         }
     }
 
-    private fun render() {
-        val heightSize = renderScreen.height / threads
+    private fun initTiles() {
+        val tilesPerWidth = 10
+        val tilesPerHeight = 16
 
-        for(i in 0 until threads) {
-            lateinit var frag : RenderFragment
-            if(completeArray.size != threads) {
-                frag = RenderFragment(0, renderScreen.width, heightSize * i, heightSize)
+        val tileWidth = renderScreen.width / tilesPerWidth
+        val tileHeight = renderScreen.height / tilesPerHeight
+
+        var counter = 0
+        for(x in 0 until tilesPerWidth) {
+            for(y in 0 until tilesPerHeight) {
+                val frag = RenderFragment(counter,x * tileWidth, tileWidth, y * tileHeight, tileHeight)
                 completeArray.add(frag)
-            } else {
-                frag = completeArray[i]
+                counter += 1
             }
-            meshes.forEach { m -> m.setColor(Col(255, 255, 255)) }
-            meshes.first { m -> m.name == "Light" }.setAsLight()
+        }
+    }
+
+    private fun render() {
+        while(activeThreads < threads) {
+            val frag = completeArray[currentIdx]
             val renderer = Renderer(Scene(*meshes), renderScreen.measuredWidth, renderScreen.height, 4)
             val task = RenderAsyncTask(this, renderer)
             task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, frag)
-            Log.d("Task", "Started thread $i")
+            Log.d("Task", "Started thread $currentIdx")
+            activeThreads += 1
+
+            currentIdx = (currentIdx + 1) % completeArray.size
         }
     }
 }

@@ -2,16 +2,19 @@ package android.app.gui
 
 import android.app.pathtracer.RenderFragment
 import android.content.Context
-import android.graphics.Paint
-import android.graphics.PixelFormat
+import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import java.util.*
+import java.util.concurrent.ArrayBlockingQueue
+import java.util.concurrent.BlockingDeque
 
 class Screen : SurfaceView, SurfaceHolder.Callback, Runnable {
 
-    private lateinit var stackWithChanges : MutableList<RenderFragment>
+    private var isRunning = false
+    private var updateQueue = ArrayBlockingQueue<RenderFragment>(24)
     private lateinit var surfaceHolder : SurfaceHolder
 
     private val paint = Paint().apply{
@@ -22,27 +25,37 @@ class Screen : SurfaceView, SurfaceHolder.Callback, Runnable {
         holder.addCallback(this)
     }
 
-    fun pushChanges(data: MutableList<RenderFragment>) {
-        stackWithChanges = data
-        Thread(this).start()
+    fun pushChanges(data: RenderFragment) {
+        updateQueue.add(data)
+        Log.d("Task", updateQueue.toString())
+        if(!isRunning) {
+            Thread(this).start()
+        }
     }
 
     override fun run() {
-        val ctx = surfaceHolder.lockCanvas()
+        isRunning = true
+        while(true) {
+            if (updateQueue.isNotEmpty()) {
+                val frag = updateQueue.remove()
 
-        stackWithChanges.forEach { frag ->
-            for (x in frag.fromX until frag.fromX + frag.xLength) {
-                for (y in frag.fromY until frag.fromY + frag.yLength) {
-                    val col = frag.pixelData[x - frag.fromX][y - frag.fromY]
-                    ctx.drawPoint(
-                        x.toFloat(),
-                        y.toFloat(),
-                        paint.apply { setARGB(255, col.r, col.g, col.b) })
+                Log.d("Task", "Rendering tile ${frag.id}")
+
+                val ctx = surfaceHolder.lockCanvas(Rect(frag.fromX, frag.fromY, frag.fromX + frag.xLength, frag.fromY + frag.yLength))
+                for (x in frag.fromX until frag.fromX + frag.xLength) {
+                    for (y in frag.fromY until frag.fromY + frag.yLength) {
+                        val col = frag.pixelData[x - frag.fromX][y - frag.fromY]
+                        paint.apply { setARGB(255, col.r, col.g, col.b) }
+                        ctx.drawPoint(
+                            x.toFloat(),
+                            y.toFloat(),
+                            paint
+                        )
+                    }
                 }
+                surfaceHolder.unlockCanvasAndPost(ctx)
             }
         }
-
-        surfaceHolder.unlockCanvasAndPost(ctx)
     }
 
     override fun surfaceCreated(p0: SurfaceHolder?) {

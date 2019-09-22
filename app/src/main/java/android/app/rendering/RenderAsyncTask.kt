@@ -5,13 +5,14 @@ import android.app.pathtracer.Renderer
 import android.os.AsyncTask
 
 
-class RenderAsyncTask(private val notifier : AsyncTaskDoneListener, private val renderer : Renderer) : AsyncTask<RenderFragment, Unit, Unit>() {
+class RenderAsyncTask(private val notifier : AsyncTaskDoneListener, private val renderer : Renderer) : AsyncTask<RenderFragment, Int, Int>() {
 
-    override fun doInBackground(vararg p0: RenderFragment?) {
+    override fun doInBackground(vararg p0: RenderFragment?) : Int {
         renderer.renderOneStep(p0[0]!!)
+        return p0[0]!!.id
     }
 
-    override fun onPostExecute(result: Unit) {
-        notifier.notifyFinish()
+    override fun onPostExecute(tileID: Int) {
+        notifier.notifyFinish(tileID)
     }
 }

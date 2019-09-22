@@ -1,5 +1,7 @@
 package android.app.rendering
 
+import android.app.pathtracer.RenderFragment
+
 interface AsyncTaskDoneListener {
-    fun notifyFinish(tileID : Int)
+    fun notifyFinish(frag : RenderFragment)
 }

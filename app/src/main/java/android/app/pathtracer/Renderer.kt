@@ -1,5 +1,7 @@
 package android.app.pathtracer
 
+import android.util.Log
+import kotlin.math.abs
 import kotlin.math.tan
 
 class Renderer(private val s : Scene, private val width : Int, private val height : Int, private val traceDepth : Int) {
@@ -52,12 +54,30 @@ class Renderer(private val s : Scene, private val width : Int, private val heigh
     }
 
     fun renderOneStep(frag : RenderFragment) {
+        var mean = 0
+        val length = frag.xLength * frag.yLength
         for(x in frag.fromX until frag.fromX + frag.xLength) {
             for(y in frag.fromY until frag.fromY + frag.yLength) {
                 val r = pixelToWorldCoordinates(x, y)
                 val col = trace(r, 1)
                 frag.pixelData[x - frag.fromX][y - frag.fromY] = frag.pixelData[x - frag.fromX][y - frag.fromY].add(col)
+                mean += col.r
             }
         }
+
+        if(mean != 0) {
+            mean /= length
+            var varianceSum = 0
+            for(x in 0 until frag.xLength) {
+                for(y in 0 until frag.yLength) {
+                    varianceSum += (frag.pixelData[x][y].r - mean) * (frag.pixelData[x][y].r - mean)
+                }
+            }
+            frag.variance = abs(varianceSum / length / 10)
+        } else {
+            frag.variance = 0
+        }
+
+        Log.d("Priority", "Fragment $frag.id received variance of ${frag.variance}")
     }
 }

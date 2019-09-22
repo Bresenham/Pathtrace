@@ -24,8 +24,7 @@ class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
 
     private var activeThreads = 0
     private val threads = 8
-    private val completeArray = mutableListOf<RenderFragment>()
-    private var currentIdx = 0
+    private val completeArray = LinkedList<RenderFragment>()
     private lateinit var meshes : Array<Mesh>
     private val objTest = "# Blender v2.80 (sub 75) OBJ File: 'scene.blend'\n" +
             "# www.blender.org\n" +
@@ -452,11 +451,13 @@ class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
         meshes.first { m -> m.name == "Light" }.setAsLight()
     }
 
-    override fun notifyFinish(tileID : Int) {
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
-        val currentDate = sdf.format(Date())
-        Log.d("Task", "Task $tileID finished @ $currentDate")
-        renderScreen.pushChanges(completeArray[tileID])
+    override fun notifyFinish(frag : RenderFragment) {
+        val currentDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(Date())
+        Log.d("Task", "Task finished @ $currentDate")
+        renderScreen.pushChanges(frag)
+        if(frag.variance != 0) {
+            completeArray.add(frag)
+        }
         activeThreads -= 1
         render()
     }
@@ -487,8 +488,8 @@ class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
     }
 
     private fun initTiles() {
-        val tilesPerWidth = 10
-        val tilesPerHeight = 16
+        val tilesPerWidth = 20
+        val tilesPerHeight = 32
 
         val tileWidth = renderScreen.width / tilesPerWidth
         val tileHeight = renderScreen.height / tilesPerHeight
@@ -504,15 +505,10 @@ class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
     }
 
     private fun render() {
-        while(activeThreads < threads) {
-            val frag = completeArray[currentIdx]
+        while(activeThreads < threads && completeArray.isNotEmpty()) {
             val renderer = Renderer(Scene(*meshes), renderScreen.measuredWidth, renderScreen.height, 4)
-            val task = RenderAsyncTask(this, renderer)
-            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, frag)
-            Log.d("Task", "Started thread $currentIdx")
+            RenderAsyncTask(this, renderer).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, completeArray.remove())
             activeThreads += 1
-
-            currentIdx = (currentIdx + 1) % completeArray.size
         }
     }
 }

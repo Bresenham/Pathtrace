@@ -10,6 +10,8 @@ import android.view.SurfaceView
 import java.util.*
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.BlockingDeque
+import java.util.concurrent.BlockingQueue
+import java.util.concurrent.PriorityBlockingQueue
 
 class Screen : SurfaceView, SurfaceHolder.Callback, Runnable {
 
@@ -35,27 +37,27 @@ class Screen : SurfaceView, SurfaceHolder.Callback, Runnable {
 
     override fun run() {
         isRunning = true
-        while(true) {
-            if (updateQueue.isNotEmpty()) {
-                val frag = updateQueue.remove()
+        while(updateQueue.isNotEmpty()) {
+            val frag = updateQueue.remove()
 
-                Log.d("Task", "Rendering tile ${frag.id}")
+            Log.d("Task", "Rendering tile ${frag.id}")
 
-                val ctx = surfaceHolder.lockCanvas(Rect(frag.fromX, frag.fromY, frag.fromX + frag.xLength, frag.fromY + frag.yLength))
-                for (x in frag.fromX until frag.fromX + frag.xLength) {
-                    for (y in frag.fromY until frag.fromY + frag.yLength) {
-                        val col = frag.pixelData[x - frag.fromX][y - frag.fromY]
-                        paint.apply { setARGB(255, col.r, col.g, col.b) }
-                        ctx.drawPoint(
-                            x.toFloat(),
-                            y.toFloat(),
-                            paint
-                        )
-                    }
+            val ctx = surfaceHolder.lockCanvas(Rect(frag.fromX, frag.fromY, frag.fromX + frag.xLength, frag.fromY + frag.yLength))
+            for (x in frag.fromX until frag.fromX + frag.xLength) {
+                for (y in frag.fromY until frag.fromY + frag.yLength) {
+                    val col = frag.pixelData[x - frag.fromX][y - frag.fromY]
+                    paint.apply { setARGB(255, col.r, col.g, col.b) }
+                    ctx.drawPoint(
+                        x.toFloat(),
+                        y.toFloat(),
+                        paint
+                    )
                 }
-                surfaceHolder.unlockCanvasAndPost(ctx)
             }
+            surfaceHolder.unlockCanvasAndPost(ctx)
         }
+
+        isRunning = false
     }
 
     override fun surfaceCreated(p0: SurfaceHolder?) {

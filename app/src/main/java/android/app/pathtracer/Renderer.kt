@@ -16,7 +16,7 @@ class Renderer(private val s : Scene, private val width : Int, private val heigh
         val yDir = ((yH / height.toDouble()) * 2.0 - 1.0) * aspect
 
 
-        return Ray(Point3D(1.0, 0.25, 25.25), Point3D(xDir, yDir, zDir))
+        return Ray(Point3D(1.0, 0.25, 15.25), Point3D(xDir, yDir, zDir))
     }
 
     private fun trace(r : Ray, currentTraceDepth : Int) : Col {
@@ -41,7 +41,9 @@ class Renderer(private val s : Scene, private val width : Int, private val heigh
                 true -> hitObject!!.col
                 false -> {
                     val hitPoint = r.o.add(r.d.times(hitDistance))
-                    val returnColor = trace(Ray(hitPoint, Point3D.randomHemisphereDirection()), currentTraceDepth + 1)
+                    val rndPoint = Point3D.randomHemisphereDirection()
+                    val target = hitPoint.add(hitObject!!.getNormal().add(rndPoint))
+                    val returnColor = trace(Ray(hitPoint, target.sub(hitPoint)), currentTraceDepth + 1)
                     hitObject!!.col.mult(returnColor).div(255.0)
                 }
             }

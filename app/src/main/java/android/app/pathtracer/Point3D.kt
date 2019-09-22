@@ -35,20 +35,6 @@ class Point3D(private val x : Double, private val y : Double, private val z : Do
 
     companion object {
         fun randomHemisphereDirection() : Point3D {
-
-            /*
-
-                float u1 = (float)rand() / (float)RAND_MAX;
-                float u2 = (float)rand() / (float)RAND_MAX;
-                float z = 1.0f - 2.0f * u1;
-                float r = sqrtf(fmaxf(0.0, 1.0f - z * z));
-                float phi = 2.0f * (float)M_PI * u2;
-                float x = r * cosf(phi);
-                float y = r * sinf(phi);
-                return norm((struct Point) {.x = x, .y = y, .z = z});
-
-             */
-
             val u1 = Math.random()
             val u2 = Math.random()
             val z = 1.0 - 2.0 * u1

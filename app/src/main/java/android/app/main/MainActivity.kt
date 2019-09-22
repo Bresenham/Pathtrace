@@ -24,13 +24,13 @@ class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
 
     private var passes = 1
     private var finishedThreadsCounter = 0
-    private val threads = 8
+    private val threads = 16
     private val completeArray = mutableListOf<RenderFragment>()
     private lateinit var meshes : Array<Mesh>
-    private val objTest = "# Blender v2.80 (sub 75) OBJ File: ''\n" +
+    private val objTest = "# Blender v2.80 (sub 75) OBJ File: 'scene.blend'\n" +
             "# www.blender.org\n" +
             "mtllib untitled.mtl\n" +
-            "o Sphere\n" +
+            "o Light\n" +
             "v 10.526047 -0.647999 0.196357\n" +
             "v 10.526047 -0.971551 -0.287874\n" +
             "v 10.526047 -1.542741 -0.401491\n" +
@@ -410,28 +410,32 @@ class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
             "v 11.824169 1.902014 4.410250\n" +
             "v 13.845882 -3.486390 -0.584506\n" +
             "v 13.845882 1.902014 -0.584506\n" +
-            "vt 0.375000 0.000000\n" +
-            "vt 0.625000 0.000000\n" +
-            "vt 0.625000 0.250000\n" +
             "vt 0.375000 0.250000\n" +
-            "vt 0.625000 0.500000\n" +
+            "vt 0.625000 0.000000\n" +
+            "vt 0.375000 0.000000\n" +
             "vt 0.375000 0.500000\n" +
-            "vt 0.125000 0.500000\n" +
-            "vt 0.375000 0.750000\n" +
+            "vt 0.625000 0.250000\n" +
             "vt 0.125000 0.750000\n" +
-            "vt 0.875000 0.500000\n" +
-            "vt 0.875000 0.750000\n" +
+            "vt 0.125000 0.500000\n" +
             "vt 0.625000 0.750000\n" +
-            "vn -0.9269 0.0000 -0.3752\n" +
-            "vn 0.3752 0.0000 -0.9269\n" +
-            "vn 0.0000 -1.0000 0.0000\n" +
+            "vt 0.875000 0.500000\n" +
+            "vt 0.625000 0.500000\n" +
+            "vt 0.375000 0.750000\n" +
+            "vt 0.875000 0.750000\n" +
+            "vn 0.9269 0.0000 0.3752\n" +
+            "vn -0.3752 0.0000 0.9269\n" +
             "vn 0.0000 1.0000 0.0000\n" +
+            "vn 0.0000 -1.0000 -0.0000\n" +
             "usemtl None\n" +
             "s off\n" +
-            "f 65/108/75 66/109/75 68/110/75 67/111/75\n" +
-            "f 67/111/76 68/110/76 72/112/76 71/113/76\n" +
-            "f 67/114/77 71/113/77 69/115/77 65/116/77\n" +
-            "f 72/112/78 68/117/78 66/118/78 70/119/78"
+            "f 67/108/75 66/109/75 65/110/75\n" +
+            "f 71/111/76 68/112/76 67/108/76\n" +
+            "f 65/113/77 71/111/77 67/114/77\n" +
+            "f 70/115/78 68/116/78 72/117/78\n" +
+            "f 67/108/75 68/112/75 66/109/75\n" +
+            "f 71/111/76 72/117/76 68/112/76\n" +
+            "f 65/113/77 69/118/77 71/111/77\n" +
+            "f 70/115/78 66/119/78 68/116/78"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -495,7 +499,7 @@ class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
                 frag = completeArray[i]
             }
             meshes.forEach { m -> m.setColor(Col(255, 255, 255)) }
-            meshes.filter { m -> m.name == "Sphere" }.first().setAsLight()
+            meshes.first { m -> m.name == "Light" }.setAsLight()
             val renderer = Renderer(Scene(*meshes), renderScreen.measuredWidth, renderScreen.height, 4)
             val task = RenderAsyncTask(this, renderer)
             task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, frag)

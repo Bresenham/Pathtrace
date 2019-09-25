@@ -4,8 +4,8 @@ import android.app.obj.ObjReader
 import android.app.pathtracer.*
 import android.app.rendering.AsyncTaskDoneListener
 import android.app.rendering.RenderAsyncTask
-import android.os.AsyncTask
-import android.os.Bundle
+import android.app.rendering.RenderRunnable
+import android.os.*
 import android.util.Log
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
@@ -17,11 +17,14 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.Executor
-import java.util.concurrent.ThreadPoolExecutor
+import java.util.concurrent.*
 
 class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
 
+    private val workQueue : BlockingQueue<Runnable> = LinkedBlockingQueue<Runnable>()
+    private val threadPool : ThreadPoolExecutor = ThreadPoolExecutor(8, 8, 1000, TimeUnit.MILLISECONDS, workQueue)
+
+    private var currentIdx = 0
     private var activeThreads = 0
     private val threads = 8
     private val completeArray = LinkedList<RenderFragment>()
@@ -436,6 +439,15 @@ class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
             "f 65/113/77 69/118/77 71/111/77\n" +
             "f 70/115/78 66/119/78 68/116/78"
 
+    private val handler: Handler = object : Handler(Looper.getMainLooper()) {
+        override fun handleMessage(inputMessage: Message) {
+            val frag = inputMessage.obj as RenderFragment
+            renderScreen.pushChanges(frag)
+            activeThreads -= 1
+            render()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -449,6 +461,8 @@ class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
         meshes = ObjReader.parseObj(objTest)
         meshes.forEach { m -> m.setColor(Col(255, 255, 255)) }
         meshes.first { m -> m.name == "Light" }.setAsLight()
+
+
     }
 
     override fun notifyFinish(frag : RenderFragment) {
@@ -488,8 +502,8 @@ class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
     }
 
     private fun initTiles() {
-        val tilesPerWidth = 20
-        val tilesPerHeight = 32
+        val tilesPerWidth = 10
+        val tilesPerHeight = 16
 
         val tileWidth = renderScreen.width / tilesPerWidth
         val tileHeight = renderScreen.height / tilesPerHeight
@@ -505,9 +519,10 @@ class MainActivity : AppCompatActivity(), AsyncTaskDoneListener {
     }
 
     private fun render() {
-        while(activeThreads < threads && completeArray.isNotEmpty()) {
-            val renderer = Renderer(Scene(*meshes), renderScreen.measuredWidth, renderScreen.height, 4)
-            RenderAsyncTask(this, renderer).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, completeArray.remove())
+        while(activeThreads < threads) {
+            val renderer = Renderer(Scene(*meshes), renderScreen.width, renderScreen.height, 4)
+            currentIdx = (currentIdx + 1) % completeArray.size
+            threadPool.execute(RenderRunnable(renderer, completeArray[currentIdx++], handler))
             activeThreads += 1
         }
     }

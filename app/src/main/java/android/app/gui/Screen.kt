@@ -8,15 +8,12 @@ import android.util.Log
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import java.util.*
-import java.util.concurrent.ArrayBlockingQueue
-import java.util.concurrent.BlockingDeque
-import java.util.concurrent.BlockingQueue
-import java.util.concurrent.PriorityBlockingQueue
+import java.util.concurrent.*
 
 class Screen : SurfaceView, SurfaceHolder.Callback, Runnable {
 
     private var isRunning = false
-    private var updateQueue = ArrayBlockingQueue<RenderFragment>(24)
+    private var updateQueue = ArrayBlockingQueue<RenderFragment>(128)
     private lateinit var surfaceHolder : SurfaceHolder
 
     private val paint = Paint().apply{

@@ -4,7 +4,7 @@
             "outputFile": "D:\\Dokumente\\AndroidProjectFolder\\Pathtrace\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-mk\\values-mk.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Standardbenutzer\\.gradle\\caches\\transforms-2\\files-2.1\\5c1da4ed101df56d8aa354de9e0a17e0\\navigation-ui-2.0.0\\res\\values-mk\\values-mk.xml",
+                    "source": "C:\\Users\\Standardbenutzer\\.gradle\\caches\\transforms-2\\files-2.1\\243ca15323e2a67a22553197f985da16\\jetified-navigation-ui-2.0.0\\res\\values-mk\\values-mk.xml",
                     "from": {
                         "startLines": "2,3",
                         "startColumns": "4,4",
@@ -21,7 +21,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\Standardbenutzer\\.gradle\\caches\\transforms-2\\files-2.1\\c8e20fac6588eb16ab24e404418ba22e\\appcompat-1.0.2\\res\\values-mk\\values-mk.xml",
+                    "source": "C:\\Users\\Standardbenutzer\\.gradle\\caches\\transforms-2\\files-2.1\\0f1c968cfcaff762c97892db8806c4ef\\appcompat-1.0.2\\res\\values-mk\\values-mk.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -38,7 +38,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\Standardbenutzer\\.gradle\\caches\\transforms-2\\files-2.1\\78210307199941c5ac7605e3d3da55ce\\core-1.0.2\\res\\values-mk\\values-mk.xml",
+                    "source": "C:\\Users\\Standardbenutzer\\.gradle\\caches\\transforms-2\\files-2.1\\0f160c748d78e98e27da9e861ffed711\\core-1.0.2\\res\\values-mk\\values-mk.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

@@ -30,8 +30,10 @@ class MainActivity : AppCompatActivity() {
 
     private var currentIdx = 0
     private var activeThreads = 0
+
     private val verticalTiles = 8
     private val horizontalTiles = 5
+
     private val tileCollection = arrayOfNulls<RenderFragment>(verticalTiles * horizontalTiles)
     private lateinit var meshes : Array<Mesh>
     private val objTest = "# Blender v2.80 (sub 75) OBJ File: 'scene.blend'\n" +

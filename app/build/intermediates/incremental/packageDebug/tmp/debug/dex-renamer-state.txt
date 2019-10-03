@@ -1,7 +1,0 @@
-#Wed Sep 25 17:24:22 CEST 2019
-base.0=D\:\\Dokumente\\AndroidProjectFolder\\Pathtrace\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\out\\classes.dex
-path.1=classes.dex
-renamed.1=classes2.dex
-path.0=classes.dex
-renamed.0=classes.dex
-base.1=D\:\\Dokumente\\AndroidProjectFolder\\Pathtrace\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\out\\classes.dex

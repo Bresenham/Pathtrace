@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
-    private val threads = 4
+    private val threads = 8
 
     private val workQueue : BlockingQueue<Runnable> = LinkedBlockingQueue<Runnable>(128)
     private val threadPool : ThreadPoolExecutor = ThreadPoolExecutor(threads, 128, 1000, TimeUnit.SECONDS, workQueue)
@@ -31,8 +31,8 @@ class MainActivity : AppCompatActivity() {
     private var currentIdx = 0
     private var activeThreads = 0
 
-    private val verticalTiles = 8
-    private val horizontalTiles = 5
+    private val verticalTiles = 16
+    private val horizontalTiles = 10
 
     private val tileCollection = arrayOfNulls<RenderFragment>(verticalTiles * horizontalTiles)
     private lateinit var meshes : Array<Mesh>
@@ -470,6 +470,7 @@ class MainActivity : AppCompatActivity() {
         meshes = ObjReader.parseObj(objTest)
         meshes.forEach { m -> m.setColor(Col(255.toUByte(), 255.toUByte(), 255.toUByte())) }
         meshes.first { m -> m.name == "Light" }.setAsLight()
+        meshes.first { m -> m.name == "Ship" }.setColor(Col(22.toUByte(), 110.toUByte(), 45.toUByte()))
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

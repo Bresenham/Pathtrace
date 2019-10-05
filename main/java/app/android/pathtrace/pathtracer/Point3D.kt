@@ -5,7 +5,7 @@ import kotlin.math.max
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-class Point3D(private val x : Double, private val y : Double, private val z : Double) {
+class Point3D(private val x : Float, private val y : Float, private val z : Float) {
 
     fun add(p2 : Point3D) : Point3D {
         return Point3D(x + p2.x, y + p2.y, z + p2.z)
@@ -15,7 +15,7 @@ class Point3D(private val x : Double, private val y : Double, private val z : Do
         return Point3D(x - p2.x, y - p2.y, z - p2.z)
     }
 
-    fun times(t : Double) : Point3D {
+    fun times(t : Float) : Point3D {
         return Point3D(x * t, y * t, z * t)
     }
 
@@ -28,27 +28,17 @@ class Point3D(private val x : Double, private val y : Double, private val z : Do
         return Point3D(x / length, y / length, z / length)
     }
 
-    fun length() : Double {
+    fun length() : Float {
         return sqrt(x * x + y * y + z * z)
     }
 
     companion object {
         fun randomHemisphereDirection() : Point3D {
-            /*
-            val u1 = Math.random()
-            val u2 = Math.random()
-            val z = 1.0 - 2.0 * u1
-            val r = sqrt(max(0.0, 1.0 - z * z))
-            val phi = 2.0 * Math.PI * u2
-            val x = r * cos(phi)
-            val y = r * sin(phi)
-            return Point3D(x, y, z).normalize()
-            */
 
             lateinit var p : Point3D
 
             do{
-                p = Point3D(Math.random(), Math.random(), Math.random()).sub(Point3D(1.0, 1.0, 1.0)).times(2.0)
+                p = Point3D(Math.random().toFloat(), Math.random().toFloat(), Math.random().toFloat()).sub(Point3D(1.0f, 1.0f, 1.0f)).times(2.0f)
             } while (p.length() >= 1.0);
 
             return p
@@ -63,7 +53,7 @@ class Point3D(private val x : Double, private val y : Double, private val z : Do
         )
     }
 
-    fun dot(p2 : Point3D) : Double {
+    fun dot(p2 : Point3D) : Float {
         return x * p2.x + y * p2.y + z  * p2.z
     }
 }

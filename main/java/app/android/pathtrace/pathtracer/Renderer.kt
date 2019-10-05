@@ -12,7 +12,7 @@ class Renderer {
                 for(y in frag.fromY until frag.fromY + frag.yLength) {
                     val r = pixelToWorldCoordinates(height, width, x, y)
                     val col = trace(s, r, traceDepth, 1)
-                    frag.pixelData[x - frag.fromX][y - frag.fromY] = frag.pixelData[x - frag.fromX][y - frag.fromY].add(col)
+                    frag.pixelData[x - frag.fromX][y - frag.fromY].add(col)
                 }
             }
         }
@@ -28,7 +28,7 @@ class Renderer {
             val xDir = (xH / width.toDouble()) * 2.0 - 1.0
             val yDir = ((yH / height.toDouble()) * 2.0 - 1.0) * aspect
 
-            return Ray(Point3D(10.0, 0.25, 15.25), Point3D(xDir, yDir, zDir))
+            return Ray(Point3D(10.0f, 0.25f, 15.25f), Point3D(xDir.toFloat(), yDir.toFloat(), zDir.toFloat()))
         }
 
         @ExperimentalUnsignedTypes
@@ -37,7 +37,7 @@ class Renderer {
                 return Col(0.toUByte(), 0.toUByte(), 0.toUByte())
             }
 
-            var hitDistance = 1e20
+            var hitDistance = 1e20f
             var hitObject : RenderObject? = null
 
             for(m in s.objects.indices) {
@@ -45,7 +45,7 @@ class Renderer {
                 for(o in mesh.renderObjs.indices) {
                     val obj = mesh.renderObjs[o]
                     val distance = obj.intersect(r)
-                    if (distance != -1.0 && distance < hitDistance) {
+                    if (distance != -1.0f && distance < hitDistance) {
                         hitDistance = distance
                         hitObject = obj
                     }

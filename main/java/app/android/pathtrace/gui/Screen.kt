@@ -41,8 +41,11 @@ class Screen : SurfaceView, SurfaceHolder.Callback, Runnable {
             val ctx = surfaceHolder.lockCanvas(Rect(frag.fromX, frag.fromY, frag.fromX + frag.xLength, frag.fromY + frag.yLength))
             for (x in frag.fromX until frag.fromX + frag.xLength) {
                 for (y in frag.fromY until frag.fromY + frag.yLength) {
-                    val col = frag.pixelData[x - frag.fromX][y - frag.fromY]
-                    paint.apply { setARGB(255, col.r.toInt(), col.g.toInt(), col.b.toInt()) }
+                    val cols = frag.pixelData[x - frag.fromX][y - frag.fromY]
+                    val r = cols.map { it.r }.sum().div(cols.size.toUInt()).toInt()
+                    val g = cols.map { it.g }.sum().div(cols.size.toUInt()).toInt()
+                    val b = cols.map { it.b }.sum().div(cols.size.toUInt()).toInt()
+                    paint.apply { setARGB(255, r, g, b) }
                     ctx.drawPoint(
                         x.toFloat(),
                         y.toFloat(),

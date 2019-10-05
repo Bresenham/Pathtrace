@@ -16,5 +16,5 @@ abstract class RenderObject(var col : Col, var isLight : Boolean) {
         return this.normal
     }
 
-    abstract fun intersect(r : Ray) : Double
+    abstract fun intersect(r : Ray) : Float
 }

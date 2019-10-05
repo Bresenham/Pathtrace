@@ -18,9 +18,9 @@ class ObjReader {
                 /* Vertex Definition */
                 if(line[0] == 'v' && (line[1] == ' ' || line[1] == '\t')) {
                     val points = line.split(line[1])
-                    val x = points[1].toDouble()
-                    val y = points[2].toDouble()
-                    val z = points[3].toDouble()
+                    val x = points[1].toFloat()
+                    val y = points[2].toFloat()
+                    val z = points[3].toFloat()
                     vertices.add(Point3D(x, y, z))
                 } else if(line[0] == 'f') { /* Triangle Definition */
                     val vtx = line.split(line[1])
@@ -31,9 +31,9 @@ class ObjReader {
                     triangles.add(Triangle(vertices[v1], vertices[v2], vertices[v3], Col(255.toUByte(), 255.toUByte(), 255.toUByte()), false, normals[vn]))
                 } else if(line[0] == 'v' && line[1] == 'n') { /* Normal Definition */
                     val points = line.split(line[2])
-                    val x = points[1].toDouble()
-                    val y = points[2].toDouble()
-                    val z = points[3].toDouble()
+                    val x = points[1].toFloat()
+                    val y = points[2].toFloat()
+                    val z = points[3].toFloat()
                     normals.add(Point3D(x, y, z))
                 } else if(line[0] == 'o') { /* Object Definition */
                     if(triangles.isNotEmpty()) {

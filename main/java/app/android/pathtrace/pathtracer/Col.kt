@@ -6,10 +6,15 @@ class Col @ExperimentalUnsignedTypes constructor(val r : UByte, val g : UByte, v
 
     @ExperimentalUnsignedTypes
     fun add(c2 : Col) : Col {
-        val nR = min((r + c2.r).toInt(), 255).toUByte()
-        val nG = min((g + c2.g).toInt(), 255).toUByte()
-        val nB = min((b + c2.b).toInt(), 255).toUByte()
-        return Col(nR, nG, nB)
+        return if(this.isBlack()) {
+            c2
+        } else {
+            val nR = (r + c2.r).toInt().div(2).toUByte()
+            val nG = (r + c2.r).toInt().div(2).toUByte()
+            val nB = (r + c2.r).toInt().div(2).toUByte()
+
+            Col(nR, nG, nB)
+        }
     }
 
     @ExperimentalUnsignedTypes
@@ -23,5 +28,10 @@ class Col @ExperimentalUnsignedTypes constructor(val r : UByte, val g : UByte, v
     @ExperimentalUnsignedTypes
     fun div(f : UByte) : Col {
         return Col((r / f).toUByte(), (g / f).toUByte(), (b / f).toUByte())
+    }
+
+    @ExperimentalUnsignedTypes
+    fun isBlack() : Boolean {
+        return r == 0.toUByte() && g == 0.toUByte() && b == 0.toUByte()
     }
 }

@@ -31,8 +31,8 @@ class MainActivity : AppCompatActivity() {
     private var currentIdx = 0
     private var activeThreads = 0
 
-    private val verticalTiles = 16
-    private val horizontalTiles = 10
+    private val verticalTiles = 20
+    private val horizontalTiles = 12
 
     private val tileCollection = arrayOfNulls<RenderFragment>(verticalTiles * horizontalTiles)
     private lateinit var meshes : Array<Mesh>

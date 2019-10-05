@@ -2,61 +2,33 @@ package app.android.pathtrace.gui
 
 import android.content.Context
 import android.graphics.*
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.util.AttributeSet
 import android.util.Log
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import app.android.pathtrace.pathtracer.RenderFragment
+import app.android.pathtrace.rendering.UpdateRunnable
+import kotlinx.android.synthetic.main.activity_main.*
 import java.util.concurrent.*
 
-class Screen : SurfaceView, SurfaceHolder.Callback, Runnable {
+class Screen : SurfaceView, SurfaceHolder.Callback {
 
-    private var isRunning = false
-    private var updateQueue = ArrayBlockingQueue<RenderFragment>(128)
     private lateinit var surfaceHolder : SurfaceHolder
 
-    private val paint = Paint().apply{
-        setARGB(255, 255, 0, 0)
-    }
+    private val workQueue : BlockingQueue<Runnable> = LinkedBlockingQueue<Runnable>(32)
+    private val threadPool : ThreadPoolExecutor = ThreadPoolExecutor(2, 128, 1000, TimeUnit.SECONDS, workQueue)
 
     constructor(context: Context, attr: AttributeSet) : super(context, attr) {
         holder.addCallback(this)
     }
 
-    fun pushChanges(data: RenderFragment) {
-        updateQueue.add(data)
-        if(!isRunning) {
-            Thread(this).start()
-        }
-    }
-
-    @ExperimentalUnsignedTypes
-    override fun run() {
-        isRunning = true
-        while(updateQueue.isNotEmpty()) {
-            val frag = updateQueue.remove()
-
-            Log.d("Task", "Rendering Tile ${frag.id}")
-
-            val ctx = surfaceHolder.lockCanvas(Rect(frag.fromX, frag.fromY, frag.fromX + frag.xLength, frag.fromY + frag.yLength))
-            for (x in frag.fromX until frag.fromX + frag.xLength) {
-                for (y in frag.fromY until frag.fromY + frag.yLength) {
-                    val cols = frag.pixelData[x - frag.fromX][y - frag.fromY]
-                    val r = cols.map { it.r }.sum().div(cols.size.toUInt()).toInt()
-                    val g = cols.map { it.g }.sum().div(cols.size.toUInt()).toInt()
-                    val b = cols.map { it.b }.sum().div(cols.size.toUInt()).toInt()
-                    paint.apply { setARGB(255, r, g, b) }
-                    ctx.drawPoint(
-                        x.toFloat(),
-                        y.toFloat(),
-                        paint
-                    )
-                }
-            }
-            surfaceHolder.unlockCanvasAndPost(ctx)
-        }
-
-        isRunning = false
+    fun pushChanges(frag: RenderFragment) {
+        threadPool.execute(
+            UpdateRunnable(surfaceHolder, frag)
+        )
     }
 
     override fun surfaceCreated(p0: SurfaceHolder?) {

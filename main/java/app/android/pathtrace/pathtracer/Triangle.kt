@@ -7,30 +7,25 @@ class Triangle(private val v0 : Point3D, private val v1 : Point3D, private val v
     }
 
     override fun intersect(r: Ray): Float {
-        val edge1 = v1.sub(v0)
-        val edge2 = v2.sub(v0)
-
-        val h = r.d.cross(edge2)
-        val a = edge1.dot(h)
+        val a = v1.sub(v0).dot(r.d.cross(v2.sub(v0)))
         if(a > -EPSILON && a < EPSILON) {
             return -1.0f
         }
 
         val f = 1.0 / a
-        val s = r.o.sub(v0)
-        val u = f * (s.dot(h))
+        val u = f * (r.o.sub(v0).dot(r.d.cross(v2.sub(v0))))
         if(u < 0.0 || u > 1.0) {
             return -1.0f
         }
 
-        val q = s.cross(edge1)
+        val q = r.o.sub(v0).cross(v1.sub(v0))
         val v = f * r.d.dot(q)
 
         if(v < 0.0 || u + v > 1.0) {
             return -1.0f
         }
 
-        val t = f * edge2.dot(q)
+        val t = f * v2.sub(v0).dot(q)
 
         return when(t > EPSILON) {
             true -> t.toFloat()

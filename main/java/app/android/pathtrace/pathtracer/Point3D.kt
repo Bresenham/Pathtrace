@@ -1,11 +1,8 @@
 package app.android.pathtrace.pathtracer
 
-import kotlin.math.cos
-import kotlin.math.max
-import kotlin.math.sin
 import kotlin.math.sqrt
 
-class Point3D(private val x : Float, private val y : Float, private val z : Float) {
+class Point3D(private val x: Float, private val y: Float, private val z: Float) {
 
     fun add(p2 : Point3D) : Point3D {
         return Point3D(x + p2.x, y + p2.y, z + p2.z)

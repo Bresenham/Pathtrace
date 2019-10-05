@@ -57,9 +57,7 @@ class Renderer {
                     true -> hitObject.col
                     false -> {
                         val hitPoint = r.o.add(r.d.times(hitDistance))
-                        val rndPoint = Point3D.randomHemisphereDirection()
-                        val target = hitPoint.add(hitObject.getNormal()).add(rndPoint)
-                        val returnColor = trace(s, Ray(hitPoint, target.sub(hitPoint).normalize()), maxDepth, currentTraceDepth + 1)
+                        val returnColor = trace(s, Ray(hitPoint, hitPoint.add(hitObject.getNormal()).add(Point3D.randomHemisphereDirection()).sub(hitPoint).normalize()), maxDepth, currentTraceDepth + 1)
                         hitObject.col.mult(returnColor)
                     }
                 }

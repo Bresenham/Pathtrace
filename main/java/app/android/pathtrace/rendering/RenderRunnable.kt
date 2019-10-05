@@ -8,6 +8,7 @@ import app.android.pathtrace.pathtracer.Scene
 
 class RenderRunnable(private val s : Scene, private val width: Int, private val height : Int, private val traceDepth: Int, private val frag : RenderFragment, private val hndlr : Handler) : Runnable {
 
+    @ExperimentalUnsignedTypes
     override fun run() {
         Log.d("Task", "Started Tile ${frag.id}")
         Renderer.renderOneStep(s, width, height, traceDepth, frag)
